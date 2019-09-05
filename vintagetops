@@ -1,0 +1,607 @@
+{% comment %}
+  Collection template, used on collection.liquid and collection.image.liquid
+{% endcomment %}
+
+{% paginate collection.products by 12 %}
+
+<header class="section-header text-center">
+  <h1>{{ collection.title }}</h1>
+  <hr class="hr--small">
+  {% if collection.description != blank %}
+    <div class="grid">
+      <div class="grid__item">
+        <div class="rte">
+          {{ collection.description }}
+        </div>
+      </div>
+    </div>
+  {% endif %}
+
+    <div class="grid--full collection-sorting{% if section.settings.collection_sort_enable %} collection-sorting--enabled{% endif %}">
+      {% if section.settings.collection_sort_enable %}
+        {% include 'collection-sorting' %}
+      {% endif %}
+    </div>
+
+  {% if section.settings.collection_tags_enable %}
+    {% if collection.all_tags.size > 0 %}
+      {% if section.settings.collection_sort_enable %}
+        <hr class="hr--small">
+      {% endif %}
+      {% comment %}
+        To provide a 'catch-all' link at the top of the list,
+        check against the collection.handle, product type, and vendor.
+      {% endcomment %}
+      <ul class="tags tags--collection inline-list">
+        <li{% unless current_tags %} class="tag--active"{% endunless %}>
+          {% comment %}
+            Good for /collections/all collection and regular collections
+          {% endcomment %}
+          {% if collection.handle %}
+            <a href="/collections/{{ collection.handle }}">
+              {{ 'collections.general.all_of_collection' | t }}
+            </a>
+
+          {% comment %}
+            Good for automatic type collections
+          {% endcomment %}
+          {% elsif collection.current_type %}
+            <a href="{{ collection.current_type | url_for_type }}">
+              {{ 'collections.general.all_of_collection' | t }}
+            </a>
+
+          {% comment %}
+            Good for automatic vendor collections
+          {% endcomment %}
+          {% elsif collection.current_vendor %}
+            <a href="{{ collection.current_vendor | url_for_vendor }}">
+              {{ 'collections.general.all_of_collection' | t }}
+            </a>
+          {% endif %}
+        </li>
+
+        {% for tag in collection.all_tags %}
+          {% if current_tags contains tag %}
+            <li class="tag--active">
+              {{ tag | link_to_remove_tag: tag }}
+            </li>
+          {% else %}
+            <li>
+              {% comment %}
+                Use link_to_add_tag if you want to allow filtering
+                by multiple tags
+              {% endcomment %}
+              {{ tag | link_to_tag: tag }}
+            </li>
+          {% endif %}
+        {% endfor %}
+      </ul>
+    {% endif %}
+  {% endif %}
+
+  {% if section.settings.collection_tags_enable %}
+    <hr class="hr--small hr--clear">
+  {% endif %}
+  <ul class="clearfix filters">
+         <li class="clearfix filter">
+
+    {% assign tags = 'Men, Women' | split: ',' %}
+
+    <label>Shop by Gender</label>
+
+    <select class="coll-filter">
+
+      <option value="">All</option>
+
+      {% for t in tags %}
+
+      {% assign tag = t | strip %}
+
+      {% if current_tags contains tag %}
+
+      <option value="{{ tag | handle }}" selected>{{ tag }}</option>
+
+      {% elsif collection.all_tags contains tag %}
+
+      <option value="{{ tag | handle }}">{{ tag }}</option>
+
+      {% endif %}
+
+      {% endfor %}
+
+    </select>
+
+  </li>
+
+  <li class="clearfix filter">
+
+    {% assign tags = 'Camo, Plaid, Color-Black, Color-Blue, Color-Brown, Color-Gray, Color-Green, Color-Maroon, Color-Multi, Color-Purple, Color-Red, Color-Striped, Color-Tan, Color-Turquoise, Color-White, Color-Yellow' | split: ',' %}
+
+    <label>Shop by Color</label>
+
+    <select class="coll-filter">
+
+      <option value="">All</option>
+
+      {% for t in tags %}
+
+      {% assign tag = t | strip %}
+
+      {% if current_tags contains tag %}
+
+      <option value="{{ tag | handle }}" selected>{{ tag }}</option>
+
+      {% elsif collection.all_tags contains tag %}
+
+      <option value="{{ tag | handle }}">{{ tag }}</option>
+
+      {% endif %}
+
+      {% endfor %}
+
+    </select>
+
+  </li>
+
+  <li class="clearfix filter">
+
+    {% assign tags = 'Size-XS, Size-Small, Size-Medium, Size-Large, Size-XL' | split: ',' %}
+
+    <label>Shop by Size</label>
+
+    <select class="coll-filter">
+
+      <option value="">All</option>
+
+      {% for t in tags %}
+
+      {% assign tag = t | strip %}
+
+      {% if current_tags contains tag %}
+
+      <option value="{{ tag | handle }}" selected>{{ tag }}</option>
+
+      {% elsif collection.all_tags contains tag %}
+
+      <option value="{{ tag | handle }}">{{ tag }}</option>
+
+      {% endif %}
+
+      {% endfor %}
+
+    </select>
+
+  </li>
+
+ <li class="clearfix filter">
+
+    {% assign tags = 'Button Up, Cardigan, Dashiki, Flannel, Half Shirt, Hoodie, Jersey, Pearl Snap, Polo, Poncho, Sweater, Sweatshirts, T-Shirt, Uniform' | split: ',' %}
+
+    <label>Shop by Type</label>
+
+    <select class="coll-filter">
+
+      <option value="">All</option>
+
+      {% for t in tags %}
+
+      {% assign tag = t | strip %}
+
+      {% if current_tags contains tag %}
+
+      <option value="{{ tag | handle }}" selected>{{ tag }}</option>
+
+      {% elsif collection.all_tags contains tag %}
+
+      <option value="{{ tag | handle }}">{{ tag }}</option>
+
+      {% endif %}
+
+      {% endfor %}
+
+    </select>
+
+  </li>
+
+  <li class="clearfix filter">
+
+    {% assign tags = '3 Strikes, AAA, Above Average, Act III, Adidas, Admit One, Aileen, Ambassador, Ample Togs, Andrew St John, Anvil, Aureus, Bantam, Bassett Walker, Bay Club, Belton, Benetton, Big Mac, Boss, Brindar Sport, CAC, Cal Cru, Calhoun, California, California Filly, Career Club, Caribbean Dream, Carriage Court, Casualwear, Catalina, CCM, Cedar Bend, Champion, Changes, Chase Authentics, Chaus Woman, Chris Allan Sport, Classic Fashions, Club International, Club Shred, Cotton Deluxe, Crazy Shirt, Croquet Club, Crystal Springs, Devon, Eddie Bauer, Ely Plains, Enro, ENUF, Esprit, FSSC, Fun Tees, Gant, Garan, Gearing Up, Gecko, Genesis, Gildan, Golden Wings, Greenline Sport, Hanes, Heres A Hug, Hidaco, Hobie, Hugger, James Kenrob, Jantzen, JCPenney, Jean Cut, Jeanne Pierre, Jerzees, JFR Textiles, Jockey, John Blair, John Roberts, Jolie, Jordan, JRS, Kennington, Kimberly, Kmart, Knitmaster, Lady Lilly, Landmark, Lane Bryant, Laps, Lario, Le Moda, Lee, Levis, Lifestyles, Lindsey Blake, Liquid Blue, Little House Creations, LL Bean, Logo Athletic, London Square, Lord Jeff, Majestic, Medalist, Michael Gerald, Mighty Mac, Mister Marty, Monarch, Montgomery Ward, Munsingwear, Nickelodeon, Nike, Nixit, Northwest Territory, Oakley, Oneita, Palmland, Panhandle Slim, Pannill, Pendleton, Perfect Knitting Mills, Physical Attraction, Polaris, Poly Tees, Private Club, Puritan, Q Facka, QW For Men, Reebok, Richmond, Rivers Edge, Roebucks, Roper, Russell, Sally Too, Sasson, Screen Stars, Sears, Sevens, Signal, Silversmith, Soffe, Southern Athletic, Spalding, Sportswear, Spruce, Starter, Stony Creek, Sunday Sportswear, Starter, Sunstrokes, Swingster, Spumoni, Tarni, Team Oasis, TeeJays, The Bon, The Cotton Exchange, The Fashion Place, The Mens Shop, The Pro, Timber Run, Tommy Hilfiger, Towncraft, TPlus, Track & Court, Trench, Trendi, Tultex, Van Heusen, Velva Sheen, Venezia, Warm Up, Waves, Western Shirtline, White Stag, Wilson, Woolrich, Wrangler' | split: ',' %}
+
+    <label>Shop by Brand</label>
+
+    <select class="coll-filter">
+
+      <option value="">All</option>
+
+      {% for t in tags %}
+
+      {% assign tag = t | strip %}
+
+      {% if current_tags contains tag %}
+
+      <option value="{{ tag | handle }}" selected>{{ tag }}</option>
+
+      {% elsif collection.all_tags contains tag %}
+
+      <option value="{{ tag | handle }}">{{ tag }}</option>
+
+      {% endif %}
+
+      {% endfor %}
+
+    </select>
+
+  </li>  
+     <li class="clearfix filter">
+
+    {% assign tags = 'Pre 1950s, 1950s, 1960s, 1970s, 1980s, 1990s, 2000s' | split: ',' %}
+
+    <label>Shop by Decade</label>
+
+    <select class="coll-filter">
+
+      <option value="">All</option>
+
+      {% for t in tags %}
+
+      {% assign tag = t | strip %}
+
+      {% if current_tags contains tag %}
+
+      <option value="{{ tag | handle }}" selected>{{ tag }}</option>
+
+      {% elsif collection.all_tags contains tag %}
+
+      <option value="{{ tag | handle }}">{{ tag }}</option>
+
+      {% endif %}
+
+      {% endfor %}
+
+      </select>
+
+  </li>
+         <li class="clearfix filter">
+
+    {% assign tags = '50/50, Acrylic, Corduroy, Cotton, Cotton Blend, Denim, Leather, Mesh, Polyester, Silk, Suede, Terry Cloth, Velour, Wool, Wool Blend' | split: ',' %}
+
+    <label>Shop by Material</label>
+
+    <select class="coll-filter">
+
+      <option value="">All</option>
+
+      {% for t in tags %}
+
+      {% assign tag = t | strip %}
+
+      {% if current_tags contains tag %}
+
+      <option value="{{ tag | handle }}" selected>{{ tag }}</option>
+
+      {% elsif collection.all_tags contains tag %}
+
+      <option value="{{ tag | handle }}">{{ tag }}</option>
+
+      {% endif %}
+
+      {% endfor %}
+
+      </select>
+
+  </li>
+         <li class="clearfix filter">
+
+    {% assign tags = 'Button, Clasp, Pullover, Snap, Tie, Zipper' | split: ',' %}
+
+    <label>Shop by Closure</label>
+
+    <select class="coll-filter">
+
+      <option value="">All</option>
+
+      {% for t in tags %}
+
+      {% assign tag = t | strip %}
+
+      {% if current_tags contains tag %}
+
+      <option value="{{ tag | handle }}" selected>{{ tag }}</option>
+
+      {% elsif collection.all_tags contains tag %}
+
+      <option value="{{ tag | handle }}">{{ tag }}</option>
+
+      {% endif %}
+
+      {% endfor %}
+
+      </select>
+
+  </li>
+         <li class="clearfix filter">
+
+    {% assign tags = 'Tank Top, Sleeveless, Short Sleeve, 3/4 Sleeve, Long Sleeve' | split: ',' %}
+
+    <label>Shop by Sleeve</label>
+
+    <select class="coll-filter">
+
+      <option value="">All</option>
+
+      {% for t in tags %}
+
+      {% assign tag = t | strip %}
+
+      {% if current_tags contains tag %}
+
+      <option value="{{ tag | handle }}" selected>{{ tag }}</option>
+
+      {% elsif collection.all_tags contains tag %}
+
+      <option value="{{ tag | handle }}">{{ tag }}</option>
+
+      {% endif %}
+
+      {% endfor %}
+
+      </select>
+
+  </li>
+         <li class="clearfix filter">
+
+    {% assign tags = 'All Over Print, Argyle, Blank, Cabled, Chambray, Color Block, Crew Neck, Distressed, Embroidered, Fringe, Gingham, Graphic, Guayabera, Kawaii, Knit, New With Tags, Patch, Pearl Snap, Ringer, Selvedge, Single Stitch, Single Pocket, Sparkle, Tie Dye, Turtle Neck, V-Neck' | split: ',' %}
+
+    <label>Shop by Style</label>
+
+    <select class="coll-filter">
+
+      <option value="">All</option>
+
+      {% for t in tags %}
+
+      {% assign tag = t | strip %}
+
+      {% if current_tags contains tag %}
+
+      <option value="{{ tag | handle }}" selected>{{ tag }}</option>
+
+      {% elsif collection.all_tags contains tag %}
+
+      <option value="{{ tag | handle }}">{{ tag }}</option>
+
+      {% endif %}
+
+      {% endfor %}
+
+      </select>
+
+  </li>
+         <li class="clearfix filter">
+
+    {% assign tags = 'Animals, Baja, Band, Cigarettes, College, Concert, Disco, Dressy, Entertainment, Ethnic, Farmer, Floral, Funny, Goth, Grunge, Hawaiian, Hip Hop, Hippie, Hunting, Kawaii, Made in US, Mechanic, Military, Mod, Motorcycle, Nascar, New Wave, Outdoors, Party, Preppy, Punk, Skater, Sports, Street, Surfer, Team, Tourist, Western, Work' | split: ',' %}
+
+    <label>Shop by Theme</label>
+
+    <select class="coll-filter">
+
+      <option value="">All</option>
+
+      {% for t in tags %}
+
+      {% assign tag = t | strip %}
+
+      {% if current_tags contains tag %}
+
+      <option value="{{ tag | handle }}" selected>{{ tag }}</option>
+
+      {% elsif collection.all_tags contains tag %}
+
+      <option value="{{ tag | handle }}">{{ tag }}</option>
+
+      {% endif %}
+
+      {% endfor %}
+
+      </select>
+
+  </li>
+         <li class="clearfix filter">
+
+    {% assign tags = 'Show In Stock Items Only, Show Sold Out Items Only' | split: ',' %}
+
+    <label>Hide Sold Out Items</label>
+
+    <select class="coll-filter">
+
+      <option value="">All</option>
+
+      {% for t in tags %}
+
+      {% assign tag = t | strip %}
+
+      {% if current_tags contains tag %}
+
+      <option value="{{ tag | handle }}" selected>{{ tag }}</option>
+
+      {% elsif collection.all_tags contains tag %}
+
+      <option value="{{ tag | handle }}">{{ tag }}</option>
+
+      {% endif %}
+
+      {% endfor %}
+
+      </select>
+
+  </li>
+  </ul>
+</header>
+
+{% if section.settings.collection_products_grid == 'collage' %}
+  <div class="grid grid-collage">
+    {% comment %}
+      Loop through our products in the current collection.
+      See the snippet 'snippets/product-grid-collage.liquid'.
+
+      `is_reverse_row__product`, `three_row_index__product`, `collection_product_count`, and `divisible_by_three__product` are
+      all used by 'snippets/product-grid-collage.liquid'
+    {% endcomment %}
+    {% assign is_reverse_row__product = false %}
+    {% assign three_row_index__product = 0 %}
+    {% assign collection_product_count__product = collection.products.size %}
+    {% assign divisible_by_three__product = collection_product_count__product | modulo:3 %}
+    {% for product in collection.products %}
+      {% include 'product-grid-collage' %}
+    {% else %}
+
+      {% if shop.products_count == 0 %}
+        {% comment %}
+          Add default products to help with onboarding for collections/all only
+        {% endcomment %}
+        {% include 'onboarding-featured-products' %}
+      {% else %}
+        {% comment %}
+          If collection exists but is empty, display message
+        {% endcomment %}
+        <div class="grid__item text-center">
+          <p>{{ 'collections.general.no_matches' | t }}</p>
+        </div>
+      {% endif %}
+    {% endfor %}
+
+  </div>
+{% elsif section.settings.collection_products_grid == 'grid' %}
+  <div class="grid-uniform">
+    {% assign grid_item_width = 'medium--one-half large--one-third' %}
+    {% for product in collection.products %}
+      {% include 'product-grid-item' %}
+    {% else %}
+      {% if collection.handle == 'all' %}
+        {% comment %}
+          Add default products to help with onboarding for collections/all only
+        {% endcomment %}
+        {% include 'onboarding-featured-products' %}
+      {% else %}
+        {% comment %}
+          If collection exists but is empty, display message
+        {% endcomment %}
+        <div class="grid__item text-center">
+          <p>{{ 'collections.general.no_matches' | t }}</p>
+        </div>
+      {% endif %}
+    {% endfor %}
+  </div>
+{% endif %}
+
+{% if paginate.pages > 1 %}
+  {% include 'pagination' %}
+{% endif %}
+
+{% endpaginate %}
+<script>
+
+  Shopify.queryParams = {};
+
+  if (location.search.length) {
+
+    for (var aKeyValue, i = 0, aCouples = location.search.substr(1).split('&'); i < aCouples.length; i++) {
+
+      aKeyValue = aCouples[i].split('=');
+
+      if (aKeyValue.length > 1) {
+
+        Shopify.queryParams[decodeURIComponent(aKeyValue[0])] = decodeURIComponent(aKeyValue[1]);
+
+      }
+
+    }
+
+  }
+
+  jQuery('.coll-picker').change(function() {
+
+    if (jQuery(this).val()) {
+
+      location.href = '/collections/' + jQuery(this).val();
+
+    }
+
+    else {
+
+      location.href = '/collections/all';
+
+    }
+
+  });
+
+  var collFilters = jQuery('.coll-filter');
+
+  collFilters.change(function() {
+
+    delete Shopify.queryParams.page;
+
+    var newTags = [];
+
+    collFilters.each(function() {
+
+      if (jQuery(this).val()) {
+
+        newTags.push(jQuery(this).val());
+
+      }
+
+    });
+
+    {% if collection.handle %}
+
+    var newURL = '/collections/{{ collection.handle }}';
+
+    if (newTags.length) {
+
+      newURL += '/' + newTags.join('+');
+
+    }
+
+    var search = jQuery.param(Shopify.queryParams);
+
+    if (search.length) {
+
+      newURL += '?' + search;
+
+    }
+
+    location.href = newURL;
+
+    {% else %}
+
+    if (newTags.length) {
+
+      Shopify.queryParams.constraint = newTags.join('+');
+
+    }
+
+    else {
+
+      delete Shopify.queryParams.constraint;
+
+    }
+
+    location.search = jQuery.param(Shopify.queryParams);
+
+    {% endif %}
+
+  });
+
+</script>
+<style>
+
+.filters { list-style-type: none; }
+
+.filter { float: left; margin-right: 15px; }
+
+.filter label { display: block; margin: 10px 0; }
+
+.filter select { max-width: 200px; }
+
+</style>
